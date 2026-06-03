@@ -15,7 +15,7 @@ export default function LoginPage() {
     setError("");
 
     if (!supabase) {
-      setError("Supabase is not configured.");
+      setError("Supabase is not configured");
       return;
     }
 
