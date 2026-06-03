@@ -49,7 +49,10 @@ export default function HomePage() {
     }, 8000);
 
     return () => {
-      supabase.removeChannel(channel);
+      // ✅ FIX: safe cleanup
+      if (supabase) {
+        supabase.removeChannel(channel);
+      }
       clearInterval(interval);
     };
   }, []);
