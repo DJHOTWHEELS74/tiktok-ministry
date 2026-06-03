@@ -14,6 +14,8 @@ export default function HomePage() {
   const [lastUpdate, setLastUpdate] = useState(Date.now());
 
   async function loadPreview() {
+    if (!supabase) return;
+
     const { data } = await supabase
       .from("prayers")
       .select("id, message")
@@ -22,14 +24,15 @@ export default function HomePage() {
 
     if (data) {
       setPrayers(data as Prayer[]);
-      setLastUpdate(Date.now()); // visual refresh trigger
+      setLastUpdate(Date.now());
     }
   }
 
   useEffect(() => {
+    if (!supabase) return;
+
     loadPreview();
 
-    // REALTIME SUPABASE UPDATES
     const channel = supabase
       .channel("home-prayer-preview")
       .on(
@@ -41,7 +44,6 @@ export default function HomePage() {
       )
       .subscribe();
 
-    // fallback refresh every 8 seconds
     const interval = setInterval(() => {
       loadPreview();
     }, 8000);
@@ -55,7 +57,6 @@ export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center px-6 bg-stone-950 text-white">
 
-      {/* TITLE — PUSHED DOWN */}
       <h1 className="text-5xl font-bold mb-6 mt-16 text-center">
         🙏 TikTok Outreach Ministry
       </h1>
@@ -74,9 +75,7 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* PRAYER FEED */}
       <div className="w-full max-w-xl space-y-3">
-
         {prayers.length === 0 && (
           <p className="text-gray-400 text-center">
             No prayers yet 🙏
@@ -93,12 +92,10 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* 🔁 small update indicator (you’ll SEE real-time changes now) */}
       <p className="text-xs text-gray-500 mt-6">
         Live updates active • {new Date(lastUpdate).toLocaleTimeString()}
       </p>
 
-      {/* ✨ SWIRL BORDER ANIMATION */}
       <style jsx>{`
         .swirl-border {
           border: 1px solid rgba(255, 255, 255, 0.15);
